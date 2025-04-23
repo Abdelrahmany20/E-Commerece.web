@@ -22,6 +22,7 @@ namespace Persistence
             if (spec.IncludeExpressions.Count > 0)
                 query = spec.IncludeExpressions.Aggregate(query, (current, exp) => current.Include(exp));
 
+
             return query;
         }
 
