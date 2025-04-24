@@ -1,5 +1,6 @@
-﻿using Abstraction;
+﻿ using Abstraction;
 using Microsoft.AspNetCore.Mvc;
+using Shared;
 using Shared.Dto_s;
 using System;
 using System.Collections.Generic;
@@ -11,12 +12,12 @@ namespace presentation.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductController(IServicesManger servicesManger) :ControllerBase
+    public class ProductController(IServicesManger servicesManger) : ControllerBase
     {
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAllProducts()
+        public async Task<ActionResult<PaginatedResult<ProductDto>>> GetAllProducts([FromQuery]ProductQueryParams productQueryParams)
         {
-            var Products = await servicesManger.ProductServices.GetAllProductAsync();
+            var Products = await servicesManger.ProductServices.GetAllProductAsync(productQueryParams);
             return Ok(Products);
         }
 
@@ -43,7 +44,7 @@ namespace presentation.Controllers
         {
             var product = await servicesManger.ProductServices.GetProductByIdAsync(id);
             return Ok(product);
-        } 
+        }
 
     }
 }

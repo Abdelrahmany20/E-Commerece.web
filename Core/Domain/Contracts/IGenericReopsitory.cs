@@ -19,6 +19,9 @@ namespace Domain.Contracts
         Task<TEntity> GetByIdAsync(ISpecifications<TEntity, TKey> spec);
 
 
+        Task<int> CountAsync(ISpecifications<TEntity, TKey> spec);
+
+
 
 
         void Add(TEntity entity);

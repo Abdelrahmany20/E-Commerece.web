@@ -19,8 +19,28 @@ namespace Persistence
             if (spec.Criteria != null)
                 query = query.Where(spec.Criteria);
 
+
+
+
+            if(spec.OrderBy is not null)
+                query = query.OrderBy(spec.OrderBy);
+
+           if (spec.OrderByDesc is not null)
+                query = query.OrderByDescending(spec.OrderByDesc);
+
+
+
+
             if (spec.IncludeExpressions.Count > 0)
                 query = spec.IncludeExpressions.Aggregate(query, (current, exp) => current.Include(exp));
+
+
+            if (spec.IsPaginated == true)
+                query=query.Skip(spec.Skip).Take(spec.Take);
+
+
+
+           
 
 
             return query;
