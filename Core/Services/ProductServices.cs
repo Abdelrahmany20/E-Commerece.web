@@ -1,6 +1,7 @@
 ﻿using Abstraction;
 using AutoMapper;
 using Domain.Contracts;
+using Domain.Exeptions;
 using Domain.Models.Products;
 using Services.Specifications;
 using Shared;
@@ -62,7 +63,16 @@ namespace Services
              var spec = new ProductWithBrand_TypeSpecification(id);
 
 
+
+
             var Product = await unitOfWork.GetRepository<Product, int>().GetByIdAsync(spec);
+
+
+            if (Product == null)
+                throw new ProductNotFoundExecption(id);
+
+
+
             return mapper.Map<Product, ProductDto>(Product);
         }
     }

@@ -1,10 +1,15 @@
 
 using Abstraction;
 using Domain.Contracts;
+using E_Commerece.web.CustomMiddleWares;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
 using Persistence.Repositories;
 using Services;
+using Shared.ErrorModels;
+using StackExchange.Redis;
 using System.Threading.Tasks;
 
 namespace E_Commerece.web
@@ -39,7 +44,40 @@ namespace E_Commerece.web
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddAutoMapper(typeof(AssemblyRefrences).Assembly);
             builder.Services.AddScoped<IServicesManger, ServicesManger>();
-            
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+
+            {
+                options.InvalidModelStateResponseFactory = (context) =>
+                {
+                    var Errors = context.ModelState
+                        .Where(M => M.Value.Errors.Any())
+                        .Select(M => new ValidationError()
+                        {
+
+                            Field = M.Key,
+                            Errors = M.Value.Errors.Select(e => e.ErrorMessage)
+
+
+
+                        });
+                      
+                    var Response = new ValidationErrorToReturn()
+                    {
+
+                        ValidationErrors = Errors,
+
+                    };
+                    return new BadRequestObjectResult(Response);
+                };
+
+            });
+
+            builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+            builder.Services.AddSingleton<IConnectionMultiplexer>((_) =>
+            {
+                return ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("RedisConnectionString"));
+            });
+
             #endregion
 
             var app = builder.Build();
@@ -49,6 +87,7 @@ namespace E_Commerece.web
             #region MiddleWares- Configure PipeLines
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
+                app.UseMiddleware<CustomExceptionMiddleware>();
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
