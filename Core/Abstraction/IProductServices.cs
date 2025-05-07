@@ -1,4 +1,5 @@
-﻿using Shared.Dto_s;
+﻿using Shared;
+using Shared.Dto_s;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace Abstraction
     public interface IProductServices
     {
 
-        Task<IEnumerable<ProductDto>> GetAllProductAsync();
+        Task<PaginatedResult<ProductDto>> GetAllProductAsync(ProductQueryParams productQueryParams);
 
         Task<ProductDto> GetProductByIdAsync(int id);
 

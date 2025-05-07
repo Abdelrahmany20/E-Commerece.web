@@ -12,10 +12,6 @@ namespace Persistence.Data
    public class StoreDBContext(DbContextOptions<StoreDBContext> options) : DbContext(options)
     {
 
-        //public StoreDBContext(DbContextOptions options) : base(options)
-        //{
-
-        //}
         
 
 

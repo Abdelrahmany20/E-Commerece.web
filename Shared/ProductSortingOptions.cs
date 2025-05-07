@@ -4,13 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Contracts
+namespace Shared
 {
-    public interface IDbInializer
+    public enum ProductSortingOptions
     {
+        NameAsc=1,
+        NameDesc=2,
+        priceAsc=3,
+        priceDesc=4,
 
-        Task InializeAsync();
 
-       Task IdentityInializeAsync();
     }
 }
