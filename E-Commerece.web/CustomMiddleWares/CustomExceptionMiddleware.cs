@@ -38,11 +38,19 @@ namespace E_Commerece.web.CustomMiddleWares
             {
                 logger.LogError(ex, "Something Went Wrong");
 
+                var response = new ErrorToReturn()
+                {
+                    ErrorMessage = ex.Message,
+                    
+
+                };
 
 
-                httpContext.Response.StatusCode = ex switch
+                response.StatusCode  = ex switch
                 {
                     NotFoundExecption => StatusCodes.Status404NotFound,
+                    UnauthorizedAccessException => StatusCodes.Status401Unauthorized,
+                    BadRequestExeption badRequestExeption => GetBadRequestErrors(badRequestExeption, response) ,
                     _ => StatusCodes.Status500InternalServerError
                 }  ;
 
@@ -52,11 +60,6 @@ namespace E_Commerece.web.CustomMiddleWares
 
 
 
-                var response = new ErrorToReturn()
-                {
-                    StatusCode = httpContext.Response.StatusCode,
-                    ErrorMessage = ex.Message
-                };
 
                 var responseToReturn = JsonSerializer.Serialize(response);
 
@@ -64,6 +67,15 @@ namespace E_Commerece.web.CustomMiddleWares
 
                 await httpContext.Response.WriteAsync(responseToReturn);
             }
+        }
+
+
+        private static int GetBadRequestErrors(BadRequestExeption badRequestExeption,ErrorToReturn response)
+        {
+            response  .Errors =badRequestExeption.Errors;
+            return StatusCodes.Status400BadRequest;
+
+
         }
     }
 }

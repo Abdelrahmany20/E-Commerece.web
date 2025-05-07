@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Domain.Models.Basket
 {
-    public class BasketItemcs
+    public class BasketItems
     {
 
         public int Id { get; set; }

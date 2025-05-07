@@ -1,7 +1,9 @@
 
 using Abstraction;
 using Domain.Contracts;
+using Domain.Models.Identity;
 using E_Commerece.web.CustomMiddleWares;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -29,13 +31,32 @@ namespace E_Commerece.web
             builder.Services.AddSwaggerGen();
 
 
-            builder.Services.AddDbContext<StoreDBContext>(options =>
+            builder.Services.AddDbContext<StoreDBContext>(Options =>
             {
+                var Connectionstring = builder.Configuration.GetConnectionString("DefaultConnection");
 
-                var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-                options.UseSqlServer(connectionString);
-
+                Options.UseSqlServer(Connectionstring);
             });
+
+
+            builder.Services.AddDbContext<StoreIdentityDbContext>(Options =>
+            {
+                var Connectionstring = builder.Configuration.GetConnectionString("IdentityConnection");
+
+                Options.UseSqlServer(Connectionstring);
+            });
+
+
+
+
+
+
+            builder.Services.AddIdentity<ApplicationUser,IdentityRole>()
+                .AddEntityFrameworkStores<StoreIdentityDbContext>();
+
+
+
+
 
 
 
@@ -97,6 +118,10 @@ namespace E_Commerece.web
 
             app.UseStaticFiles();
 
+
+            app.UseRouting();
+            app.UseAuthentication();
+
             app.UseAuthorization();
 
 
@@ -111,7 +136,8 @@ namespace E_Commerece.web
 
             using var scope = app.Services.CreateScope();
             var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInializer>();
-            await dbInitializer.InializeAsunc();
+            await dbInitializer.InializeAsync();
+            await dbInitializer.IdentityInializeAsync();
 
 
         }

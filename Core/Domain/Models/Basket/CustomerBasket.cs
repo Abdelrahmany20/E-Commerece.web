@@ -10,6 +10,6 @@ namespace Domain.Models.Basket
     {
 
         public string Id { get; set; }
-        public ICollection<BasketItemcs> Items { get; set; } = [];
+        public ICollection<BasketItems> Items { get; set; } = [];
     }
 }
